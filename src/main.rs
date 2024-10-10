@@ -1,6 +1,6 @@
-use nosleep::NoSleep;
 use winapi::shared::windef::POINT;
 use winapi::um::winuser::{GetCursorPos, SetCursorPos};
+use winapi::um::winuser::{keybd_event, VK_LSHIFT, KEYEVENTF_KEYUP};
 
 use std::f64::consts::PI;
 use std::thread::sleep;
@@ -15,8 +15,7 @@ fn main() {
     const ELLIPSE_WIDTH: i32 = 100;
     const ELLIPSE_HEIGHT: i32 = 50;
     const STEPS: usize = 30;
-
-    let _nosleep = NoSleep::new();
+        
     sleep(Duration::from_secs(INITIAL_SLEEP_SECS));
 
     let builder = FigureBuilder::new(Duration::from_millis(FIGURE_SLEEP_MS));
@@ -43,6 +42,7 @@ impl Figure {
             let x = start_x + dx;
             let y = start_y + dy;
             set_mouse_position((x, y));
+            bump_wake_time();
             sleep(self.sleep_time);
         }
         set_mouse_position((start_x, start_y));
@@ -106,4 +106,11 @@ fn set_mouse_position((x, y): (i32, i32)) {
         SetCursorPos(x, y);
     }
     // println!("set: x={x} y={y}");
+}
+
+fn bump_wake_time() {
+    unsafe {
+        keybd_event(VK_LSHIFT as u8, 0, 0, 0);
+        keybd_event(VK_LSHIFT as u8, 0, KEYEVENTF_KEYUP, 0);
+    }
 }
