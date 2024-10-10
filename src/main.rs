@@ -26,7 +26,7 @@ fn main() {
     loop {
         let (mouse_x, mouse_y) = get_mouse_position();
         ellipse.draw(mouse_x, mouse_y);
-
+        bump_wake_time();
         sleep(Duration::from_secs(BETWEEN_SLEEP_SECS));
     }
 }
@@ -42,7 +42,6 @@ impl Figure {
             let x = start_x + dx;
             let y = start_y + dy;
             set_mouse_position((x, y));
-            bump_wake_time();
             sleep(self.sleep_time);
         }
         set_mouse_position((start_x, start_y));
